@@ -40,18 +40,14 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="phone app-page">
-      <section className="page-content">
-        <div className="page-card">
+    <main className="app-page">
+      <section className="page-content page-content--center">
+        <div className="page-card page-card--compact">
           <h1 className="page-card-title">Авторизация</h1>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Form
-            className="maintenance-form"
-            onSubmit={handleSubmit}
-            style={{ flex: 1, display: "flex", flexDirection: "column" }}
-          >
+          <Form className="maintenance-form" onSubmit={handleSubmit}>
             <label className="field">
               <span>Логин</span>
               <input
@@ -78,12 +74,7 @@ export default function LoginPage() {
               />
             </label>
 
-            <Button
-              type="submit"
-              className="primary-button"
-              style={{ marginTop: "auto" }}
-              disabled={loading}
-            >
+            <Button type="submit" className="primary-button" disabled={loading}>
               {loading ? <Spinner animation="border" size="sm" /> : "Войти"}
             </Button>
           </Form>

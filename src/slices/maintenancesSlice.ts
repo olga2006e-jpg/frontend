@@ -15,6 +15,7 @@ interface MaintenancesState {
   loading: boolean;
   likedIds: number[];
   error: string | null;
+  isMockMode: boolean;
 }
 
 const initialState: MaintenancesState = {
@@ -23,6 +24,7 @@ const initialState: MaintenancesState = {
   loading: false,
   likedIds: MOCK_LIKED_IDS,
   error: null,
+  isMockMode: false,
 };
 
 export const getMaintenancesList = createAsyncThunk(
@@ -67,14 +69,12 @@ export const createMaintenance = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // Шаг 1: создаём черновик (multipart/form-data)
       const draftRes = await api.api.createMaintenanceApiMaintenancesPost({
         title: data.title,
         image: data.image ?? undefined,
         video: data.video ?? undefined,
       });
 
-      // Шаг 2: публикуем с описанием, скоростью и тарифом
       const pubRes = await api.api.publishMaintenanceApiMaintenancesMaintenanceIdPublishPut(
         draftRes.data.id,
         {
@@ -145,12 +145,14 @@ const maintenancesSlice = createSlice({
       state.items = [];
       state.filter = { from: 0, to: 1000 };
       state.error = null;
+      state.isMockMode = false;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getMaintenancesList.fulfilled, (state, action) => {
         state.items = action.payload;
+        state.isMockMode = false;
       })
       .addCase(getMaintenancesList.rejected, (state, action) => {
         const payload = action.payload as { message: string; isGuest: boolean } | undefined;
@@ -160,6 +162,7 @@ const maintenancesSlice = createSlice({
           state.items = MOCK_MAINTENANCES.filter(
             (m) => m.price_per_km >= from && m.price_per_km <= to
           );
+          state.isMockMode = true;
         }
       })
       .addCase(createMaintenance.fulfilled, (state, action) => {

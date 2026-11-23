@@ -12,8 +12,8 @@ export default function AddPage() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [speedKmh, setSpeedKmh] = useState(60);
-  const [pricePerKm, setPricePerKm] = useState(100);
+  const [speedKmh, setSpeedKmh] = useState<string>("");
+  const [pricePerKm, setPricePerKm] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
@@ -31,8 +31,8 @@ export default function AddPage() {
       createMaintenance({
         title,
         description,
-        speed_kmh: speedKmh,
-        price_per_km: pricePerKm,
+        speed_kmh: Number(speedKmh),
+        price_per_km: Number(pricePerKm),
         image: imageFile,
         video: videoFile,
       })
@@ -43,16 +43,12 @@ export default function AddPage() {
   };
 
   return (
-    <main className="phone app-page">
-      <section className="page-content">
-        <div className="page-card">
+    <main className="app-page">
+      <section className="page-content page-content--center">
+        <div className="page-card page-card--compact-form">
           <h1 className="page-card-title">Добавление</h1>
 
-          <Form
-            className="maintenance-form"
-            onSubmit={handleSubmit}
-            style={{ flex: 1, display: "flex", flexDirection: "column" }}
-          >
+          <Form className="maintenance-form" onSubmit={handleSubmit}>
             <label className="field">
               <span>Название транспорта</span>
               <input
@@ -74,70 +70,73 @@ export default function AddPage() {
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Описание перевозки..."
                 disabled={loading}
-                style={{
-                  height: 70,
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  border: "1px solid var(--border)",
-                  background: "var(--card)",
-                  fontSize: 14,
-                  resize: "none",
-                }}
+                rows={3}
               />
             </label>
 
-            <label className="field">
+            {/* Поле для фото без лишнего текста */}
+            <div className="field">
               <span>Фото (файл для MinIO)</span>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                disabled={loading}
-              />
-            </label>
+              <label className="file-upload-wrapper" style={{ minHeight: 44 }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  disabled={loading}
+                  className="file-upload-input"
+                />
+                <span className="file-upload-name">
+                  {imageFile ? imageFile.name : ""}
+                </span>
+              </label>
+            </div>
 
-            <label className="field">
+            {/* Поле для видео без лишнего текста */}
+            <div className="field">
               <span>Видео (файл для MinIO)</span>
-              <input
-                type="file"
-                accept="video/*"
-                onChange={handleVideoChange}
-                disabled={loading}
-              />
-            </label>
+              <label className="file-upload-wrapper" style={{ minHeight: 44 }}>
+                <input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoChange}
+                  disabled={loading}
+                  className="file-upload-input"
+                />
+                <span className="file-upload-name">
+                  {videoFile ? videoFile.name : ""}
+                </span>
+              </label>
+            </div>
 
-            <div style={{ display: "flex", gap: 10 }}>
-              <label className="field" style={{ flex: 1 }}>
+            <div className="field-row">
+              <label className="field">
                 <span>Скорость (км/ч)</span>
                 <input
                   type="number"
                   required
                   min={0}
                   value={speedKmh}
-                  onChange={(e) => setSpeedKmh(Number(e.target.value))}
+                  onChange={(e) => setSpeedKmh(e.target.value)}
+                  placeholder="Например: 60"
                   disabled={loading}
                 />
               </label>
 
-              <label className="field" style={{ flex: 1 }}>
+              <label className="field">
                 <span>Тариф (₽/км)</span>
                 <input
                   type="number"
                   required
                   min={0}
                   value={pricePerKm}
-                  onChange={(e) => setPricePerKm(Number(e.target.value))}
+                  onChange={(e) => setPricePerKm(e.target.value)}
+                  placeholder="Например: 100"
                   disabled={loading}
                 />
               </label>
             </div>
 
-            <Button
-              type="submit"
-              className="primary-button"
-              style={{ marginTop: "auto" }}
-              disabled={loading}
-            >
+            <Button type="submit" className="primary-button" disabled={loading}>
               {loading ? <Spinner animation="border" size="sm" /> : "Добавить"}
             </Button>
           </Form>

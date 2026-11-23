@@ -1,64 +1,9 @@
-// import { Card, Button } from "react-bootstrap";
-// import { useNavigate } from "react-router-dom";
-// import type { MaintenanceDto } from "../types";
-// import placeholderImg from "../assets/placeholder.png";
-
-// interface Props {
-//   item: MaintenanceDto;
-//   onDelete: (id: number) => void;
-// }
-
-// export default function MaintenanceCard({ item, onDelete }: Props) {
-//   const navigate = useNavigate();
-
-//   const goToFeed = () => {
-//     // Переходим на ленту с параметром id выбранной карточки
-//     navigate(`/feed?id=${item.id}`);
-//   };
-
-//   return (
-//     <Card 
-//       className="maintenance-card" 
-//       style={{ width: "100%", display: "flex", flexDirection: "column", border: "none", overflow: "hidden" }}
-//     >
-//       <Card.Img
-//         variant="top"
-//         src={item.image_url || placeholderImg}
-//         onError={(e) => {
-//           (e.target as HTMLImageElement).src = placeholderImg;
-//         }}
-//         onClick={goToFeed} 
-//         style={{ cursor: "pointer", height: "90px", objectFit: "cover", width: "100%" }}
-//       />
-//       <Card.Body className="card-body" style={{ padding: "8px", display: "flex", flexDirection: "column", gap: "6px", flex: "1 1 auto" }}>
-//         <div className="title-row" onClick={goToFeed} style={{ cursor: "pointer" }}> {/* <-- Вызов перехода */}
-//           <h2>{item.title}</h2>
-//         </div>
-//         <div className="title-divider"></div>
-//         <div className="likes-row">
-//           <span className="heart">♥</span>
-//           <span>{item.likes}</span>
-//         </div>
-//         <div className="metrics">
-//           <span><b>{item.speed_kmh} км/ч</b></span>
-//           <span><b>{item.price_per_km} руб/км</b></span>
-//         </div>
-//         <div className="card-actions" style={{ marginTop: "auto" }}>
-//           <Button className="delete-btn" onClick={() => onDelete(item.id)}>
-//             Удалить
-//           </Button>
-//         </div>
-//       </Card.Body>
-//     </Card>
-//   );
-// }
-
-
-import { Card, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import type { MaintenanceDto } from "../types";
-import placeholderImg from "../assets/placeholder.png";
 import { useAppSelector } from "../store/hooks";
+
+const placeholderImg = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='150'%3E%3Crect width='300' height='150' fill='%23dce6ec'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%236B7A99' font-size='14'%3EНет фото%3C/text%3E%3C/svg%3E";
 
 interface Props {
   item: MaintenanceDto;
@@ -75,44 +20,47 @@ export default function MaintenanceCard({ item, onDelete, isLoading }: Props) {
   };
 
   return (
-    <Card
-      className="maintenance-card"
-      style={{ width: "100%", display: "flex", flexDirection: "column", border: "none", overflow: "hidden" }}
-    >
-      <Card.Img
-        variant="top"
-        src={item.image_url || placeholderImg}
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = placeholderImg;
-        }}
-        onClick={goToFeed}
-        style={{ cursor: "pointer", height: "90px", objectFit: "cover", width: "100%" }}
-      />
-      <Card.Body className="card-body" style={{ padding: "8px", display: "flex", flexDirection: "column", gap: "6px", flex: "1 1 auto" }}>
-        <div className="title-row" onClick={goToFeed} style={{ cursor: "pointer" }}>
-          <h2>{item.title}</h2>
+    <div className="maintenance-card">
+      <div className="card__img" onClick={goToFeed}>
+        <img
+          src={item.image_url || placeholderImg}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = placeholderImg;
+          }}
+          alt={item.title}
+        />
+      </div>
+      
+      <div className="card__info">
+        <div className="card__text">
+          <div className="card__title" onClick={goToFeed}>
+            {item.title}
+          </div>
+          
+          {/* ДОБАВИЛИ ОПИСАНИЕ КАТАЛОГА */}
+          <div className="card__desc">
+            {item.description}
+          </div>
+
+          <div className="card__divider" />
+          
+          <div className="card__likes">
+            <span className="heart">♥</span> {item.likes}
+          </div>
+          <div className="card__metrics">
+            <span><b>{item.speed_kmh}</b> км/ч</span>
+            <span><b>{item.price_per_km}</b> ₽/км</span>
+          </div>
         </div>
-        <div className="title-divider"></div>
-        <div className="likes-row">
-          <span className="heart">♥</span>
-          <span>{item.likes}</span>
-        </div>
-        <div className="metrics">
-          <span><b>{item.speed_kmh} км/ч</b></span>
-          <span><b>{item.price_per_km} руб/км</b></span>
-        </div>
+
         {isAuthenticated && (
-          <div className="card-actions" style={{ marginTop: "auto" }}>
-            <Button
-              className="delete-btn"
-              onClick={() => onDelete(item.id)}
-              disabled={isLoading}
-            >
+          <div className="card__actions">
+            <Button className="delete-btn" onClick={() => onDelete(item.id)} disabled={isLoading}>
               Удалить
             </Button>
           </div>
         )}
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }
